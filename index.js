@@ -11,16 +11,20 @@ if (!process.env.SLACK_TOKEN) {
 }
 
 
+var mongoStorage = require('botkit-storage-mongo')({mongoUri:process.env.MONGODB_URI})
+
 var os = require('os');
 
 var controller = Botkit.slackbot({
     debug: false,
+    storage: mongoStorage
 });
 
 var bot = controller.spawn({
     token: process.env.SLACK_TOKEN
 }).startRTM();
 
+var db_functions = require('./Helpers/db_helpers')
 //###################################################################
 //Below me is useful to Jesse:
 
@@ -41,6 +45,10 @@ controller.middleware.receive.use(wit.receive); //now controller runs everything
 
 controller.hears(['Hey DealBot'], 'ambient,direct_message,direct_mention',function(bot, message) {
 
+
+  //store new user in mongo db...
+  //you can add more functionality if you want..
+  db_functions.create_user_if_new(controller,message.user,message.team,message.ts)
 
   //figure out if what the highest determined intent was and excectute function if required
   if(message.intents[0].entities.intent[0].value == "deal_show"){

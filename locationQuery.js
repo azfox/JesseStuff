@@ -20,6 +20,7 @@ try {
     return;
   }else {
       var loc = data.results[0].geometry.location
+      console.log(JSON.stringify(data.results))
       //console.log(JSON.parse(loc))
       lat = loc.lat
       lng = loc.lng
